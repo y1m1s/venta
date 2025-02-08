@@ -63,36 +63,6 @@
         </form>
     </div>
     <!--                                                                    -->
-    <!--                  Modal para tipo persona                            -->
-    <!--  ================================================================= -->
-    <div id="miModalTipoPersona" class="modal">
-        <div class="modal-contenido">
-            <span class="cerrar">&times;</span>
-            <form autocomplete="off">
-                <div>
-                    <label for="tipoPersona" class="form-label">Tipo Persona:</label>
-                    <input type="text" id="tipoPersona" name="tipoPersona" class="form-control" placeholder="Tipo Persona">
-                </div>
-                <div class="form-group d-flex justify-content-center ">
-                    <button id="btnSetTipoPersona" class="btn bg-success mt-4">Aceptar</button>
-                </div>
-
-            </form>
-            <table class="table table-striped table-bordered" id="tablaTipoPersonas">
-                <thead>
-                    <tr class="text-center">
-                        <th>#</th>
-                        <th>Tipo Persona</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Las categorías se cargarán aquí -->
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <!--                                                                    -->
     <!--                  Modal para tipo documento                           -->
     <!--  ================================================================= -->
     <div id="miModalTipoDocumento" class="modal">
@@ -117,7 +87,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Las categorías se cargarán aquí -->
+                    <!-- Se cargaran los documentos -->
                 </tbody>
             </table>
         </div>
@@ -128,8 +98,8 @@
     <!--  ================================================================= -->
     <div class="box mt-3">
         <form method="post" autocomplete="off" class="d-grid">
-            <p class="col-7 d-flex align-items-center">
-                <label class="form-label me-2">Mostrar :</label>
+            <p class="col-3 d-flex align-items-center">
+                <label class="form-label me-2">Mostrar:</label>
                 <select name="mostrar" id="mostrar" class="form-select me-2">
                     <option value="">Seleccionar ...</option>
                     <option value="5">5</option>
@@ -140,7 +110,8 @@
                 </select>
                 <label class="form-label">registros </label>
             </p>
-            <div class="col-5">
+            <div class="col-5"></div>
+            <div class="col-4">
                 <p class="d-flex align-items-center">
                     <label class="form-label me-2">Buscar:</label>
                     <input type="text" name="campo" id="campo" class="form-control">
@@ -179,12 +150,9 @@
         getTipoDocumentoSelect();
 
     });
-
-
     //                             
     //                                                Modales
     // ============================================================================================================
-
     function configurarModal(abrirId, modalId, cerrarClase) {
         const abrirModal = document.getElementById(abrirId);
         const modal = document.getElementById(modalId);
@@ -298,8 +266,6 @@
 
     }
 
-
-
     function deleteTipoDocumento() {
         const idTipoDocumento = $(this).data('id_tipo_documento');
         if (confirm("¿Seguro que deseas eliminar Tipo de Documento?")) {
@@ -364,4 +330,10 @@
         $("#tipoDocumento").val("");
 
     }
+    //                             
+    //                                                Personas
+    // ============================================================================================================
+
+
+
 </script>
