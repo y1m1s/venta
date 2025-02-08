@@ -1,5 +1,5 @@
 <div class="box-title">
-    <h1>Categoria productos</h1>
+    <h1>CATEGORIA PRODUCTOS</h1>
 </div>
 <div class="d-grid box">
     <!--                                                                    -->
@@ -19,14 +19,13 @@
 
         </form>
     </div>
-    <!-- Caja sin uso para crear un espacio en medio  -->
     <div class="col-1"></div>
     <!--                                                                    -->
     <!--                          Buscar                                    -->
     <!--  ================================================================= -->
     <div class="box col-7">
         <form method="post" autocomplete="off" class="d-grid">
-            <p class="col-7 d-flex align-items-center">
+            <p class="col-5 d-flex align-items-center">
                 <label class="form-label me-2">Mostrar:</label>
                 <select name="mostrar" id="mostrar" class="form-select me-2">
                     <option value="">Seleccionar ...</option>
@@ -38,6 +37,7 @@
                 </select>
                 <label class="form-label">registros </label>
             </p>
+            <div class="col-2"></div>
             <div class="col-5">
                 <p class="d-flex align-items-center">
                     <label class="form-label me-2">Buscar:</label>

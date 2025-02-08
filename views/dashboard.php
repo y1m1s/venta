@@ -9,45 +9,45 @@
 
 <body>
 
-    <div class="container-box">
-        <div class="box flex flex-center red">
+    <div class=" box d-grid mb-3">
+        <div class="box col-3 flex flex-center bg-danger">
             <img src="views/assets/img/carrito.svg" alt="">
-            <div class="box-content">
+            <div class="text-b">
                 <h3>Ventas Realizadas</h3>
                 <span>S/150</span>
             </div>
         </div>
-        <div class="box flex flex-center skyblue">
+        <div class="box col-3 flex flex-center bg-primary">
             <img src="views/assets/img/carrito.svg" alt="">
-            <div class="box-content">
+            <div class="text-b">
                 <h3>Ventas Realizadas</h3>
                 <span>S/150</span>
             </div>
         </div>
-        <div class="box flex flex-center green">
+        <div class="box col-3 flex flex-center bg-success">
             <img src="views/assets/img/carrito.svg" alt="">
-            <div class="box-content">
+            <div class="text-b">
                 <h3>Ventas Realizadas</h3>
                 <span>S/150</span>
             </div>
         </div>
-        <div class="box flex flex-center yellow">
+        <div class="box col-3 flex flex-center bg-warning">
             <img src="views/assets/img/carrito.svg" alt="">
-            <div class="box-content">
+            <div class="text-b">
                 <h3>Ventas Realizadas</h3>
                 <span>S/150</span>
             </div>
         </div>
-        <div class="box flex flex-center grey">
+        <div class="box col-3  flex flex-center bg-secondary">
             <img src="views/assets/img/carrito.svg" alt="">
-            <div class="box-content">
+            <div class="text-b">
                 <h3>Ventas Realizadas</h3>
                 <span>S/150</span>
             </div>
         </div>
 
     </div>
-    <div class="container-box flex">
+    <div class="box d-flex">
 
         <div class="table-responsive">
             <table class="table table-striped table-bordered">
@@ -67,8 +67,8 @@
                         <td>30</td>
                         <td>Ingeniero</td>
                         <td>
-                            <button class="btn btn-primary">Editar</button>
-                            <button class="btn btn-danger">Eliminar</button>
+                            <button class="btn bg-primary">Editar</button>
+                            <button class="btn bg-danger">Eliminar</button>
                         </td>
                     </tr>
                     <tr>
@@ -77,8 +77,8 @@
                         <td>28</td>
                         <td>Diseñadora</td>
                         <td>
-                            <button class="btn btn-primary">Editar</button>
-                            <button class="btn btn-danger">Eliminar</button>
+                            <button class="btn bg-primary">Editar</button>
+                            <button class="btn bg-danger">Eliminar</button>
                         </td>
                     </tr>
                 </tbody>
@@ -102,8 +102,8 @@
                         <td>30</td>
                         <td>Ingeniero</td>
                         <td>
-                            <button class="btn skiblue">Editar</button>
-                            <button class="btn red">Eliminar</button>
+                            <button class="btn bg-primary">Editar</button>
+                            <button class="btn bg-danger">Eliminar</button>
                         </td>
                     </tr>
                     <tr>
@@ -112,8 +112,8 @@
                         <td>28</td>
                         <td>Diseñadora</td>
                         <td>
-                            <button class="btn skiblue">Editar</button>
-                            <button class="btn red">Eliminar</button>
+                            <button class="btn bg-primary">Editar</button>
+                            <button class="btn bg-danger">Eliminar</button>
                         </td>
                     </tr>
                 </tbody>

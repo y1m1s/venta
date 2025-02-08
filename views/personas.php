@@ -15,49 +15,48 @@
                     </div>
                     <div class="d-flex">
                         <select name="mostrar" id="tipoDocumentoSelect" class="form-select me-2">
-                            <option value="">Seleccionar ...</option>
+                            <!-- Tipo Documento -->
                         </select>
-
                         <button class="btn bg-primary" id="modalTipoDocumento" type="button">+</button>
                     </div>
                 </div>
                 <div class="col-4">
                     <div class="d-flex align-items-center mb-1">
                         <img src="views/assets/img/nro-documento.svg" alt="">
-                        <label for="nombre" class="form-label">Nro Documento:</label>
+                        <label for="nroDocumento" class="form-label">Nro Documento:</label>
 
                     </div>
-                    <input type="number" id="nombre" name="nombre" class="form-control" placeholder="Nro Documento">
+                    <input type="number" id="nroDocumento" name="nroDocumento" class="form-control" placeholder="Nro Documento">
                 </div>
                 <div class="col-4">
                     <div class="d-flex align-items-center mb-1">
                         <img src="views/assets/img/persona.svg" alt="">
-                        <label for="descripcion" class="form-label">Nombre / Razón Social:</label>
+                        <label for="nombreRazonSocial" class="form-label">Nombre / Razón Social:</label>
 
                     </div>
-                    <input type="text" id="descripcion" name="descripcion" class="form-control" placeholder="Nombre / Razón Social">
+                    <input type="text" id="nombreRazonSocial" name="nombreRazonSocial" class="form-control" placeholder="Nombre / Razón Social">
                 </div>
 
 
                 <div class="col-7">
                     <div class="d-flex align-items-center mb-1">
                         <img src="views/assets/img/ubicacion.svg" alt="">
-                        <label for="descripcion" class="form-label">Direccion:</label>
+                        <label for="direccion" class="form-label">Direccion:</label>
 
                     </div>
-                    <input type="text" id="descripcion" name="descripcion" class="form-control" placeholder="Direccion">
+                    <input type="text" id="direccion" class="form-control" placeholder="Direccion">
                 </div>
                 <div class="col-5">
                     <div class="d-flex align-items-center mb-1">
                         <img src="views/assets/img/telefono.svg" alt="">
-                        <label for="descripcion" class="form-label">Telefono:</label>
+                        <label for="telefono" class="form-label">Telefono:</label>
 
                     </div>
-                    <input type="number" id="descripcion" name="descripcion" class="form-control" placeholder="Telefono">
+                    <input type="number" id="telefono" class="form-control" placeholder="Telefono">
                 </div>
             </div>
             <div class="form-group d-flex justify-content-center ">
-                <button id="btnIngresar" class="btn bg-success mt-4">Aceptar</button>
+                <button id="btnIngresarPersona" class="btn bg-success mt-4">Aceptar</button>
             </div>
 
         </form>
@@ -333,7 +332,52 @@
     //                             
     //                                                Personas
     // ============================================================================================================
+    $("#btnIngresarPersona").click(function(e) {
+        e.preventDefault();
+        setPersona(); // Llamar a la función
+    });
+
+    function setPersona() {
+
+        let tipoDocumentoSelect = $("#tipoDocumentoSelect").val();
+        let nroDocumento = $("#nroDocumento").val();
+        let nombreRazonSocial = $("#nombreRazonSocial").val();
+        let direccion = $("#direccion").val();
+        let telefono = $("#telefono").val();
+        // console.log(tipoDocumentoSelect);
+        // console.log(nroDocumento);
+        // console.log(nombreRazonSocial);
+        // console.log(direccion);
+        // console.log(telefono);
+
+        if (tipoDocumento) {
+            $.post("ajax/personaAjax.php", {
+                accion: "crearPersona",
+                tipoDocumentoSelect: tipoDocumentoSelect,
+                nroDocumento: nroDocumento,
+                nombreRazonSocial: nombreRazonSocial,
+                direccion: direccion,
+                telefono: telefono
+            }, function(respuesta) {
+                try {
+                    const data = JSON.parse(respuesta);
+                    if (data.status === "success") {
+                        alert(data.message);
+                        console.log("ingreso correcto ")
 
 
 
+
+                    } else {
+                        alert(data.message);
+                    }
+                } catch (error) {
+                    console.error("Error al procesar la respuesta:", error, respuesta);
+                }
+            });
+        } else {
+            alert("Por favor, completa todos los campos.");
+        }
+
+    }
 </script>
