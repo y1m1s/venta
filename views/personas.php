@@ -99,7 +99,7 @@
         <form method="post" autocomplete="off" class="d-grid">
             <p class="col-3 d-flex align-items-center">
                 <label class="form-label me-2">Mostrar:</label>
-                <select name="mostrar" id="mostrar" class="form-select me-2">
+                <select id="mostrarPersonas" class="form-select me-2">
                     <option value="">Seleccionar ...</option>
                     <option value="5">5</option>
                     <option value="7">7</option>
@@ -113,19 +113,22 @@
             <div class="col-4">
                 <p class="d-flex align-items-center">
                     <label class="form-label me-2">Buscar:</label>
-                    <input type="text" name="campo" id="campo" class="form-control">
+                    <input type="text" id="buscarPersona" class="form-control">
                 </p>
             </div>
         </form>
         <!--                                                                    -->
         <!--                           Mostrar                                  -->
         <!--  ================================================================= -->
-        <table class="table table-striped table-bordered" id="tablaCategorias">
+        <table class="table table-striped table-bordered" id="tablaPersonas">
             <thead>
                 <tr class="text-center">
                     <th>#</th>
-                    <th>Nombre</th>
-                    <th>Descripcion</th>
+                    <th>Documento</th>
+                    <th>N° Documento</th>
+                    <th>Nombre /Razon social</th>
+                    <th>Direccion</th>
+                    <th>Telefono</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -147,6 +150,26 @@
     $(document).ready(function() {
         getTipoDocumento();
         getTipoDocumentoSelect();
+        paginaActual = 1;
+        getPersona(paginaActual);
+
+
+
+        $("#buscarPersona").on("keyup", function() {
+            getPersona(1); // Mantiene la misma página al buscar
+        });
+        //                             
+        //                                                Mostrar cantidad de registros 
+        // ============================================================================================================
+        $("#mostrarPersonas").on("change", function() {
+            if ($(this).val() === "") {
+                alert("Por favor, selecciona una opción válida.");
+            } else {
+                paginaActual = 1;
+                getPersona(paginaActual); // Mantiene la misma página al cambiar la cantidad
+            }
+        });
+
 
     });
     //                             
@@ -363,7 +386,7 @@
                     const data = JSON.parse(respuesta);
                     if (data.status === "success") {
                         alert(data.message);
-                        console.log("ingreso correcto ")
+                        getPersona(paginaActual);
 
 
 
@@ -379,5 +402,68 @@
             alert("Por favor, completa todos los campos.");
         }
 
+    }
+
+
+    function getPersona(paginaPersonas) {
+        let mostrarPersonas = $("#mostrarPersonas").val();
+        let buscarPersona = $("#buscarPersona").val();
+
+        $.post("ajax/personaAjax.php", {
+                accion: "buscarPersona",
+                buscarPersona: buscarPersona,
+                mostrarPersonas: mostrarPersonas,
+                paginaPersonas: paginaPersonas
+            },
+            function(respuesta) {
+                try {
+                    const data = respuesta;
+                    const personas = data.personas;
+                    const total = data.total;
+                    const totalPaginas = data.totalPaginas;
+                    let html = "";
+
+                    personas.forEach(function(persona) {
+                        html += `
+                        <tr class="text-center">
+                            <td>${persona.id_persona}</td>
+                            <td>${persona.documento}</td>
+                            <td>${persona.nro_documento}</td>
+                            <td>${persona.nombre_razon_social}</td>
+                            <td>${persona.direccion}</td>
+                            <td>${persona.telefono}</td>
+                            <td>
+                                <button class="btn bg-primary btnEditar" 
+                                    data-id="${persona.id_persona}" 
+                                    data-nombre="${persona.nombre_razon_social}" 
+                                    data-descripcion="${persona.nro_documento}">
+                                    Editar
+                                </button>
+                                <button class="btn bg-danger btnEliminar" data-id="${persona.id_persona}">
+                                    Eliminar
+                                </button>
+                            </td>
+                        </tr>`;
+                    });
+
+                    $("#tablaPersonas tbody").html(html);
+
+                    // Corregido el uso de `personas.length`
+                    $("#infoRegistros").text(`Mostrando ${personas.length} de ${total} registros`);
+
+                    let paginacionHtml = "";
+                    for (let i = 1; i <= totalPaginas; i++) {
+                        paginacionHtml += `
+                        <li class="page-item ${i === paginaPersonas ? 'active' : ''}">
+                            <a href="#" class="page-link" onclick="paginaActual = ${i}; getPersona(${i}); return false;">${i}</a>
+                        </li>`;
+                    }
+                    $(".pagination").html(paginacionHtml);
+                } catch (error) {
+                    console.error("Error al procesar los datos:", error, respuesta);
+                }
+            });
+
+        paginaActual = paginaPersonas;
     }
 </script>

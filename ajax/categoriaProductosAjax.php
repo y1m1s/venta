@@ -67,7 +67,7 @@ class AjaxCategoriaProductos
     public function ajaxBuscarCategorias()
     {
         $campo = isset($_POST['campo']) ? $_POST['campo'] : ' '; // Si no se envía, inicializa como vacío
-        $mostrar = isset($_POST['mostrar']) ? $_POST['mostrar'] : 7;
+        $mostrar = isset($_POST['mostrar']) ? $_POST['mostrar'] : 5;
         $pagina = isset($_POST['pagina']) ? $_POST['pagina'] : 1;
 
         $categorias = CategoriaProductosControlador::ctrBuscarCategorias($campo, $mostrar, $pagina);

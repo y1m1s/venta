@@ -27,6 +27,18 @@ class AjaxPersona
             echo json_encode(["status" => "error", "message" => "Faltan datos"]);
         }
     }
+    public function ajaxGetPersonas()
+    {
+        $buscarPersona = isset($_POST["buscarPersona"]) ? $_POST["buscarPersona"] : "";
+        $mostrarPersonas = isset($_POST["mostrarPersonas"]) ? $_POST["mostrarPersonas"] : 5;
+        $paginaPersonas = isset($_POST["paginaPersonas"]) ? $_POST["paginaPersonas"] : 1;
+
+        $personas = PersonaControlador::ctrGetPerSona($buscarPersona, $mostrarPersonas, $paginaPersonas);
+
+        // Asegurar que siempre se devuelve un JSON válido
+        header('Content-Type: application/json');
+        echo json_encode($personas, JSON_UNESCAPED_UNICODE);
+    }
 }
 
 if (isset($_POST["accion"])) {
@@ -36,5 +48,7 @@ if (isset($_POST["accion"])) {
 
     if ($accion == "crearPersona") {
         $persona->ajaxSetPersonas();
+    } elseif ($accion == "buscarPersona") {
+        $persona->ajaxGetPersonas();
     }
 }

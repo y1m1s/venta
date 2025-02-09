@@ -18,4 +18,50 @@ class PersonaModelo
             return ["status" => "error", "message" => "Error al ingresar la persona"];
         }
     }
+    static public function mdlGetPersona($buscarPersona, $mostrarPersonas, $paginaPersonas)
+    {
+        $paginaPersonas = $paginaPersonas ? (int)$paginaPersonas : 1;
+        $mostrarPersonas = $mostrarPersonas ? (int)$mostrarPersonas : 5;
+        $inicio = ($paginaPersonas - 1) * $mostrarPersonas;
+
+        try {
+            $conexion = Conexion::conexion();
+
+            // Obtener total de registros
+            $totalPersonaQuery = $conexion->prepare("
+                SELECT COUNT(*) AS total
+                FROM personas
+                WHERE nombre_razon_social LIKE :buscarPersona OR nro_documento LIKE :buscarPersona
+            ");
+            $totalPersonaQuery->bindValue(":buscarPersona", "%" . $buscarPersona . "%", PDO::PARAM_STR);
+            $totalPersonaQuery->execute();
+            $totalPersonas = $totalPersonaQuery->fetch(PDO::FETCH_ASSOC)["total"];
+
+            // Obtener datos paginados
+            $stmt = $conexion->prepare("
+                SELECT personas.id_persona, tipos_documentos.documento, personas.nro_documento, personas.nombre_razon_social, personas.direccion, personas.telefono
+                FROM personas
+                INNER JOIN tipos_documentos ON personas.fk_id_tipo_documento = tipos_documentos.id_tipo_documento
+                WHERE personas.nombre_razon_social LIKE :buscarPersona OR personas.nro_documento LIKE :buscarPersona
+                ORDER BY personas.id_persona ASC
+                LIMIT :inicio, :mostrarPersonas
+            ");
+
+            $stmt->bindValue(":buscarPersona", "%" . $buscarPersona . "%", PDO::PARAM_STR);
+            $stmt->bindValue(":inicio", $inicio, PDO::PARAM_INT);
+            $stmt->bindValue(":mostrarPersonas", $mostrarPersonas, PDO::PARAM_INT);
+            $stmt->execute();
+
+            $personas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return [
+                "personas" => $personas,
+                "total" => $totalPersonas,
+                "paginaActual" => $paginaPersonas,
+                "totalPaginas" => ceil($totalPersonas / $mostrarPersonas)
+            ];
+        } catch (PDOException $e) {
+            return ["error" => $e->getMessage()];
+        }
+    }
 }

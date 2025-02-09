@@ -71,7 +71,7 @@ class CategoriaProductosModelo
             SELECT COUNT(*) AS total 
             FROM categorias 
             WHERE categoria LIKE :campo OR descripcion LIKE :campo
-        ");
+            ");
             $totalQuery->bindValue(":campo", '%' . $campo . '%', PDO::PARAM_STR);
             $totalQuery->execute();
             $total = $totalQuery->fetch(PDO::FETCH_ASSOC)['total'];
@@ -83,7 +83,7 @@ class CategoriaProductosModelo
             WHERE categoria LIKE :campo OR descripcion LIKE :campo 
             ORDER BY id_categoria ASC 
             LIMIT :inicio, :mostrar
-        ");
+            ");
             $stmt->bindValue(":campo", '%' . $campo . '%', PDO::PARAM_STR);
             $stmt->bindValue(":inicio", (int)$inicio, PDO::PARAM_INT);
             $stmt->bindValue(":mostrar", (int)$mostrar, PDO::PARAM_INT);
