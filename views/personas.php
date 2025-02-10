@@ -124,10 +124,10 @@
             <thead>
                 <tr class="text-center">
                     <th>#</th>
-                    <th>Documento</th>
-                    <th>N° Documento</th>
-                    <th>Nombre /Razon social</th>
-                    <th>Direccion</th>
+                    <th>Tipo Doc</th>
+                    <th>N° Doc</th>
+                    <th>Nombres y Apellidos /Razón social</th>
+                    <th>Dirección</th>
                     <th>Telefono</th>
                     <th>Acciones</th>
                 </tr>
@@ -357,7 +357,7 @@
     // ============================================================================================================
     $("#btnIngresarPersona").click(function(e) {
         e.preventDefault();
-        setPersona(); // Llamar a la función
+        setPersona(); 
     });
 
     function setPersona() {
@@ -367,11 +367,6 @@
         let nombreRazonSocial = $("#nombreRazonSocial").val();
         let direccion = $("#direccion").val();
         let telefono = $("#telefono").val();
-        // console.log(tipoDocumentoSelect);
-        // console.log(nroDocumento);
-        // console.log(nombreRazonSocial);
-        // console.log(direccion);
-        // console.log(telefono);
 
         if (tipoDocumento) {
             $.post("ajax/personaAjax.php", {
@@ -466,4 +461,8 @@
 
         paginaActual = paginaPersonas;
     }
+
+
+
+
 </script>
