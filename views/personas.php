@@ -357,7 +357,7 @@
     // ============================================================================================================
     $("#btnIngresarPersona").click(function(e) {
         e.preventDefault();
-        setPersona(); 
+        setPersona();
     });
 
     function setPersona() {
@@ -429,12 +429,12 @@
                             <td>${persona.telefono}</td>
                             <td>
                                 <button class="btn bg-primary btnEditar" 
-                                    data-id="${persona.id_persona}" 
+                                    data-id_persona="${persona.id_persona}" 
                                     data-nombre="${persona.nombre_razon_social}" 
                                     data-descripcion="${persona.nro_documento}">
                                     Editar
                                 </button>
-                                <button class="btn bg-danger btnEliminar" data-id="${persona.id_persona}">
+                                <button class="btn bg-danger btnEliminarPersona" data-id_persona="${persona.id_persona}">
                                     Eliminar
                                 </button>
                             </td>
@@ -461,8 +461,38 @@
 
         paginaActual = paginaPersonas;
     }
+    $(document).on('click', '.btnEliminarPersona', deletePersona);
+
+    function deletePersona() {
+        let idPersona = $(this).data("id_persona");
+        console.log(idPersona);
+        if (confirm("¿Seguro que deseas eliminar a la Persona")) {
+            $.post("ajax/personaAjax.php", {
+                    accion: "eliminarPersona",
+                    idPersona: idPersona
+                },
+                function(respuesta) {
+                    try {
+                        let data = JSON.parse(respuesta);
+                        alert(data.message);
+                        if (data.status === "success") {
+                            getPersona(paginaActual);
+                        }
+
+                    } catch (error) {
+                        console.error("Error al procesar la respuesta:", error, respuesta);
+                        alert("Error inesperado. Revisa la consola.");
+
+                    }
+
+
+                }
+            )
+        }
 
 
 
 
+
+    }
 </script>

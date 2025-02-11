@@ -12,4 +12,14 @@ class PersonaControlador
     {
         return PersonaModelo::mdlGetPersona($buscarPersona, $mostrarPersonas, $paginaPersonas);
     }
+    static public function ctrDeletePersona($idPersona)
+    {
+
+        if ($idPersona) {
+            return PersonaModelo::mdlDeletePersona($idPersona);
+        } else {
+            return ["status" => "error", "message" => "ID no válido"];
+        }
+   
+    }
 }

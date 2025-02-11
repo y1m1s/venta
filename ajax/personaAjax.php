@@ -39,6 +39,16 @@ class AjaxPersona
         header('Content-Type: application/json');
         echo json_encode($personas, JSON_UNESCAPED_UNICODE);
     }
+    public function ajaxDeletePersonas()
+    {
+        if (isset($_POST["idPersona"])) {
+            $idPersona = $_POST["idPersona"]; 
+            $persona = PersonaControlador::ctrDeletePersona($idPersona);
+            echo json_encode($persona, JSON_UNESCAPED_UNICODE);
+        } else {
+            echo json_encode(["status" => "error", "message" => "ID no proporcionado"], JSON_UNESCAPED_UNICODE);
+        }
+    }
 }
 
 if (isset($_POST["accion"])) {
@@ -50,5 +60,7 @@ if (isset($_POST["accion"])) {
         $persona->ajaxSetPersonas();
     } elseif ($accion == "buscarPersona") {
         $persona->ajaxGetPersonas();
+    } elseif ($accion == "eliminarPersona") {
+        $persona->ajaxDeletePersonas();
     }
 }

@@ -33,9 +33,9 @@ class TiposDocumentosModelo
 
             // Ejecutar la consulta y verificar si se ejecutó correctamente
             if ($stmt->execute()) {
-                return ["status" => "success", "message" => "Tipo de Persona eliminado correctamente"];
+                return ["status" => "success", "message" => "Tipo de documento eliminado correctamente"];
             } else {
-                return ["status" => "error", "message" => "Error al eliminar el Tipo de Persona"];
+                return ["status" => "error", "message" => "Error al eliminar el Tipo de Documento"];
             }
         } catch (PDOException $e) {
             // Manejar cualquier excepción y retornar el mensaje de error

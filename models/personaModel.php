@@ -64,4 +64,15 @@ class PersonaModelo
             return ["error" => $e->getMessage()];
         }
     }
+    static public function mdlDeletePersona($idPersona)
+    {
+
+        $stmt = Conexion::conexion()->prepare("DELETE FROM personas WHERE id_persona =:idPersona");
+        $stmt->bindParam(":idPersona", $idPersona, PDO::PARAM_INT);
+        if ($stmt->execute()) {
+            return ["status" => "success", "message" => "Tipo de Persona eliminado correctamente"];
+        } else {
+            return ["status" => "error", "message" => "Error al eliminar el Tipo de Persona"];
+        }
+    }
 }
