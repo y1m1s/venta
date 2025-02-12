@@ -336,13 +336,14 @@
                         $("#btnSetTipoDocumento").text("Aceptar");
                         $("#btnSetTipoDocumento").off("click").on("click", function(e) {
                             e.preventDefault();
+                            setTipoDocumento();
 
                         });
                     } else {
                         alert(data.message);
                     }
                 } catch (error) {
-                    console.error("Error al procesar la respuesta eliminar:", error, respuesta);
+                    console.error("Error al procesar la respuesta actualizar :", error, respuesta);
                 }
             });
         });
@@ -359,6 +360,7 @@
         e.preventDefault();
         setPersona();
     });
+
 
     function setPersona() {
 
@@ -383,7 +385,7 @@
                         alert(data.message);
                         getPersona(paginaActual);
 
-
+                        limpiarPersona();
 
 
                     } else {
@@ -411,6 +413,7 @@
                 paginaPersonas: paginaPersonas
             },
             function(respuesta) {
+
                 try {
                     const data = respuesta;
                     const personas = data.personas;
@@ -428,10 +431,13 @@
                             <td>${persona.direccion}</td>
                             <td>${persona.telefono}</td>
                             <td>
-                                <button class="btn bg-primary btnEditar" 
+                                <button class="btn bg-primary btnEditarPersona" 
                                     data-id_persona="${persona.id_persona}" 
-                                    data-nombre="${persona.nombre_razon_social}" 
-                                    data-descripcion="${persona.nro_documento}">
+                                    data-documento="${persona.id_tipo_documento}" 
+                                    data-nro_documento="${persona.nro_documento}"
+                                    data-nombre_razon_social="${persona.nombre_razon_social}"
+                                    data-direccion="${persona.direccion}"
+                                    data-telefono="${persona.telefono}">
                                     Editar
                                 </button>
                                 <button class="btn bg-danger btnEliminarPersona" data-id_persona="${persona.id_persona}">
@@ -461,38 +467,100 @@
 
         paginaActual = paginaPersonas;
     }
-    $(document).on('click', '.btnEliminarPersona', deletePersona);
+    $(document).off("click", ".btnEliminarPersona").on("click", ".btnEliminarPersona", deletePersona);
+    // $(document).on("click", ".btnEliminarPersona", deletePersona);
 
     function deletePersona() {
         let idPersona = $(this).data("id_persona");
         console.log(idPersona);
-        if (confirm("¿Seguro que deseas eliminar a la Persona")) {
+        console.log("Ejecutando  deletePersona...");
+        if (confirm("¿Seguro que deseas eliminar a la Persona?")) {
             $.post("ajax/personaAjax.php", {
-                    accion: "eliminarPersona",
-                    idPersona: idPersona
-                },
-                function(respuesta) {
-                    try {
-                        let data = JSON.parse(respuesta);
-                        alert(data.message);
-                        if (data.status === "success") {
-                            getPersona(paginaActual);
-                        }
-
-                    } catch (error) {
-                        console.error("Error al procesar la respuesta:", error, respuesta);
-                        alert("Error inesperado. Revisa la consola.");
-
+                accion: "eliminarPersona",
+                idPersona: idPersona
+            }, function(respuesta) {
+                try {
+                    let data = JSON.parse(respuesta);
+                    alert(data.message);
+                    if (data.status === "success") {
+                        getPersona(paginaActual);
                     }
-
-
+                } catch (error) {
+                    console.error("Error al procesar la respuesta:", error, respuesta);
+                    alert("Error inesperado. Revisa la consola.");
                 }
-            )
+            });
         }
+    }
+
+    $(document).on('click', '.btnEditarPersona', updatePersona);
+
+    function updatePersona() {
+        console.log("Ejecutando updatePersona...");
+        let idPersona = $(this).data("id_persona");
+        let documento = $(this).data("documento");
+        let nroDocumento = $(this).data("nro_documento");
+        let nombreRazonSocial = $(this).data("nombre_razon_social");
+        let direccion = $(this).data("direccion");
+        let telefono = $(this).data("telefono");
 
 
+        $("#tipoDocumentoSelect").val(documento).trigger("change");
+
+        $("#nroDocumento").val(nroDocumento);
+        $("#nombreRazonSocial").val(nombreRazonSocial);
+        $("#direccion").val(direccion);
+        $("#telefono").val(telefono);
+
+        console.log("idPersona:", idPersona);
+        console.log("documento:", documento);
+        console.log("nroDocumento:", nroDocumento);
+        console.log("nombreRazonSocial:", nombreRazonSocial);
+        console.log("direccion:", direccion);
+        console.log("telefono:", telefono);
+
+        $("#btnIngresarPersona").text("Actualizar");
+        $("#btnIngresarPersona").off("click").click(function(e) {
+            e.preventDefault();
+            $.post("ajax/personaAjax.php", {
+                accion: "editarPersona",
+                idPersona: idPersona,
+                documento: $("#tipoDocumentoSelect").val(),
+                nroDocumento: $("#nroDocumento").val(),
+                nombreRazonSocial: $("#nombreRazonSocial").val(),
+                direccion: $("#direccion").val(),
+                telefono: $("#telefono").val()
+
+            }, function(respuesta) {
+                try {
+                    const data = JSON.parse(respuesta);
+                    if (data.status === "success") {
+                        alert(data.message);
+                        getPersona(paginaActual);
+                        limpiarPersona();
+                        $("#btnIngresarPersona").text("Aceptar");
+                        $("#btnIngresarPersona").off("click").on("click", function(e) {
+                            e.preventDefault();
+                            setPersona();
+
+                        });
+                    } else {
+                        alert(data.message);
+                    }
+                } catch (error) {
+                    console.error("Error al procesar la respuesta actualizar :", error, respuesta);
+                }
+            });
+        });
+    }
+
+    function limpiarPersona() {
 
 
-
+        $("#tipoDocumentoSelect").val("").trigger("change");
+        $("#nroDocumento").val("");
+        $("#nombreRazonSocial").val("");
+        $("#direccion").val("");
+        $("#telefono").val("");
     }
 </script>

@@ -20,6 +20,11 @@ class PersonaControlador
         } else {
             return ["status" => "error", "message" => "ID no válido"];
         }
-   
+    }
+
+    static public function ctrUpdatePersona($idPersona, $documento, $nroDocumento, $nombreRazonSocial, $direccion,  $telefono)
+    {
+        $persona = PersonaModelo::mdlUpdatePersona($idPersona, $documento, $nroDocumento, $nombreRazonSocial, $direccion,  $telefono);
+        return $persona;
     }
 }

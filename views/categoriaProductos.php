@@ -74,127 +74,143 @@
 <script>
     $(document).ready(function() {
         paginaActual = 1;
-
         buscarCategoria(paginaActual); // Llamada inicial para cargar las categorías
-
         //                             
         //                                                Ingresar
         // ============================================================================================================
-        $("#btnIngresar").click(function(e) {
-            e.preventDefault();
-            const nombre = $("#nombre").val();
-            const descripcion = $("#descripcion").val();
 
-            if (nombre && descripcion) {
-                $.post("ajax/categoriaProductosAjax.php", {
-                    accion: "crear",
-                    nombre: nombre,
-                    descripcion: descripcion,
-                }, function(respuesta) {
-                    try {
-                        const data = JSON.parse(respuesta);
-                        if (data.status === "success") {
-                            alert(data.message);
-                            buscarCategoria(paginaActual); // Mantiene la misma página después de agregar
-                            limpiarCampos();
-                        } else {
-                            alert(data.message);
-                        }
-                    } catch (error) {
-                        console.error("Error al procesar la respuesta:", error, respuesta);
-                    }
-                });
-            } else {
-                alert("Por favor, completa todos los campos.");
-            }
-        });
+
         //                             
         //                                                Editar
         // ============================================================================================================
-        $(document).on('click', '.btnEditar', function() {
-            const id = $(this).data('id');
-            const nombre = $(this).data('nombre');
-            const descripcion = $(this).data('descripcion');
 
-            $("#nombre").val(nombre);
-            $("#descripcion").val(descripcion);
 
-            // Cambiar el botón a "Actualizar"
-            $("#btnIngresar").text("Actualizar");
-            $("#btnIngresar").off("click").click(function(e) {
-                e.preventDefault();
-                $.post("ajax/categoriaProductosAjax.php", {
-                    accion: "editar",
-                    id: id,
-                    nombre_categoria: $("#nombre").val(),
-                    descripcion_categoria: $("#descripcion").val()
-                }, function(respuesta) {
-                    try {
-                        const data = JSON.parse(respuesta);
-                        if (data.status === "success") {
-                            alert(data.message);
-                            buscarCategoria(paginaActual);
-                            limpiarCampos();
-                            // Mantiene la misma página después de editar
-                            $("#btnIngresar").text("Aceptar");
-                            $("#btnIngresar").off("click").on("click", function(e) {
-                                e.preventDefault();
 
-                                // Reasigna el evento original para "Aceptar"
-                            });
-                        } else {
-                            alert(data.message);
-                        }
-                    } catch (error) {
-                        console.error("Error al procesar la respuesta:", error, respuesta);
-                    }
-                });
-            });
-        });
         //                             
         //                                                Eliminar
         // ============================================================================================================
-        $(document).on('click', '.btnEliminar', function() {
-            const id = $(this).data('id');
-            if (confirm("¿Seguro que deseas eliminar esta categoría?")) {
-                $.post("ajax/categoriaProductosAjax.php", {
-                    accion: "eliminar",
-                    id: id
-                }, function(respuesta) {
-                    try {
-                        const data = JSON.parse(respuesta);
-                        alert(data.message);
-                        if (data.status === "success") {
-                            buscarCategoria(paginaActual);
-                        }
-                    } catch (error) {
-                        console.error("Error al procesar la respuesta:", error, respuesta);
-                        alert("Error inesperado. Revisa la consola.");
-                    }
-                });
-            }
-        });
+
+
+
 
         //                             
         //                                                Buscar en tiempo real
         // ============================================================================================================
-        $("#campo").on("keyup", function() {
-            buscarCategoria(1); // Mantiene la misma página al buscar
-        });
+
         //                             
         //                                                Mostrar cantidad de registros 
         // ============================================================================================================
-        $("#mostrar").on("change", function() {
-            if ($(this).val() === "") {
-                alert("Por favor, selecciona una opción válida.");
-            } else {
-                paginaActual = 1;
-                buscarCategoria(paginaActual); // Mantiene la misma página al cambiar la cantidad
-            }
-        });
+
 
 
     });
+    $("#btnIngresar").click(function(e) {
+        e.preventDefault();
+        setCategoria();
+    });
+    $(document).off("click", ".btnEditar").on("click", ".btnEditar", updateCategoria);
+    $(document).off("click", ".btnEliminar").on("click", ".btnEliminar", deleteCategoria);
+    $("#campo").on("keyup", function() {
+        buscarCategoria(1);
+    });
+    $("#mostrar").on("change", function() {
+        if ($(this).val() === "") {
+            alert("Por favor, selecciona una opción válida.");
+        } else {
+            paginaActual = 1;
+            buscarCategoria(paginaActual);
+        }
+    });
+
+    function updateCategoria() {
+        const id = $(this).data('id');
+        const nombre = $(this).data('nombre');
+        const descripcion = $(this).data('descripcion');
+
+        $("#nombre").val(nombre);
+        $("#descripcion").val(descripcion);
+
+        // Cambiar el botón a "Actualizar"
+        $("#btnIngresar").text("Actualizar");
+        $("#btnIngresar").off("click").click(function(e) {
+            e.preventDefault();
+            $.post("ajax/categoriaProductosAjax.php", {
+                accion: "editar",
+                id: id,
+                nombre_categoria: $("#nombre").val(),
+                descripcion_categoria: $("#descripcion").val()
+            }, function(respuesta) {
+                try {
+                    const data = JSON.parse(respuesta);
+                    if (data.status === "success") {
+                        alert(data.message);
+                        buscarCategoria(paginaActual);
+                        limpiarCampos();
+                        $("#btnIngresar").text("Aceptar");
+                        $("#btnIngresar").off("click").on("click", function(e) {
+                            e.preventDefault();
+                            setCategoria();
+
+                        });
+                    } else {
+                        alert(data.message);
+                    }
+                } catch (error) {
+                    console.error("Error al procesar la respuesta:", error, respuesta);
+                }
+            });
+        });
+    }
+
+    function deleteCategoria() {
+        const id = $(this).data('id');
+        if (confirm("¿Seguro que deseas eliminar esta categoría?")) {
+            $.post("ajax/categoriaProductosAjax.php", {
+                accion: "eliminar",
+                id: id
+            }, function(respuesta) {
+                try {
+                    const data = JSON.parse(respuesta);
+                    alert(data.message);
+                    if (data.status === "success") {
+                        buscarCategoria(paginaActual);
+                    }
+                } catch (error) {
+                    console.error("Error al procesar la respuesta:", error, respuesta);
+                    alert("Error inesperado. Revisa la consola.");
+                }
+            });
+        }
+    }
+
+    function setCategoria() {
+        console.log("Ejecutando setCategoria...");
+        const nombre = $("#nombre").val();
+        const descripcion = $("#descripcion").val();
+
+        if (nombre && descripcion) {
+            $.post("ajax/categoriaProductosAjax.php", {
+                accion: "crear",
+                nombre: nombre,
+                descripcion: descripcion,
+            }, function(respuesta) {
+                try {
+                    const data = JSON.parse(respuesta);
+                    if (data.status === "success") {
+                        alert(data.message);
+                        buscarCategoria(paginaActual); // Mantiene la misma página después de agregar
+                        limpiarCampos();
+                    } else {
+                        alert(data.message);
+                    }
+                } catch (error) {
+                    console.error("Error al procesar la respuesta:", error, respuesta);
+                }
+            });
+        } else {
+            alert("Por favor, completa todos los campos.");
+        }
+    }
     //                             
     //                                                Mostrar buscar 
     // ============================================================================================================

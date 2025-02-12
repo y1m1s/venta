@@ -42,12 +42,33 @@ class AjaxPersona
     public function ajaxDeletePersonas()
     {
         if (isset($_POST["idPersona"])) {
-            $idPersona = $_POST["idPersona"]; 
+            $idPersona = $_POST["idPersona"];
             $persona = PersonaControlador::ctrDeletePersona($idPersona);
             echo json_encode($persona, JSON_UNESCAPED_UNICODE);
         } else {
             echo json_encode(["status" => "error", "message" => "ID no proporcionado"], JSON_UNESCAPED_UNICODE);
         }
+    }
+    public function ajaxUpdatePersona()
+    {
+        if (
+            !empty($_POST["idPersona"]) &&
+            !empty($_POST["documento"]) &&
+            !empty($_POST["nroDocumento"]) &&
+            !empty($_POST["nombreRazonSocial"]) &&
+            !empty($_POST["telefono"]) &&
+            isset($_POST["direccion"])
+
+        ) {
+            $idPersona = $_POST["idPersona"];
+            $documento = $_POST["documento"];
+            $nroDocumento = $_POST["nroDocumento"];
+            $nombreRazonSocial = $_POST["nombreRazonSocial"];
+            $direccion = $_POST["direccion"];
+            $telefono = $_POST["telefono"];
+        }
+        $persona = PersonaControlador::ctrUpdatePersona($idPersona, $documento, $nroDocumento, $nombreRazonSocial, $direccion,  $telefono);
+        echo json_encode($persona, JSON_UNESCAPED_UNICODE);
     }
 }
 
@@ -62,5 +83,7 @@ if (isset($_POST["accion"])) {
         $persona->ajaxGetPersonas();
     } elseif ($accion == "eliminarPersona") {
         $persona->ajaxDeletePersonas();
+    } elseif ($accion == "editarPersona") {
+        $persona->ajaxUpdatePersona();
     }
 }

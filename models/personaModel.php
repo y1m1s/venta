@@ -39,7 +39,7 @@ class PersonaModelo
 
             // Obtener datos paginados
             $stmt = $conexion->prepare("
-                SELECT personas.id_persona, tipos_documentos.documento, personas.nro_documento, personas.nombre_razon_social, personas.direccion, personas.telefono
+                SELECT personas.id_persona, tipos_documentos.documento,tipos_documentos.id_tipo_documento, personas.nro_documento, personas.nombre_razon_social, personas.direccion, personas.telefono
                 FROM personas
                 INNER JOIN tipos_documentos ON personas.fk_id_tipo_documento = tipos_documentos.id_tipo_documento
                 WHERE personas.nombre_razon_social LIKE :buscarPersona OR personas.nro_documento LIKE :buscarPersona
@@ -73,6 +73,32 @@ class PersonaModelo
             return ["status" => "success", "message" => "Tipo de Persona eliminado correctamente"];
         } else {
             return ["status" => "error", "message" => "Error al eliminar el Tipo de Persona"];
+        }
+    }
+    static public function mdlUpdatePersona($idPersona, $documento, $nroDocumento, $nombreRazonSocial, $direccion, $telefono)
+    {
+        $stmt = Conexion::conexion()->prepare("
+        UPDATE personas 
+        SET 
+            nro_documento = :nroDocumento,
+            nombre_razon_social = :nombreRazonSocial,
+            direccion = :direccion,
+            telefono = :telefono,
+            fk_id_tipo_documento = :documento 
+        WHERE id_persona = :idPersona
+    ");
+
+        $stmt->bindValue(":nroDocumento", $nroDocumento, PDO::PARAM_INT);
+        $stmt->bindValue(":nombreRazonSocial", $nombreRazonSocial, PDO::PARAM_STR);
+        $stmt->bindValue(":direccion", $direccion, PDO::PARAM_STR);
+        $stmt->bindValue(":telefono", $telefono, PDO::PARAM_INT);
+        $stmt->bindValue(":documento", $documento, PDO::PARAM_INT);
+        $stmt->bindValue(":idPersona", $idPersona, PDO::PARAM_INT);
+
+        if ($stmt->execute()) {
+            return ["status" => "success", "message" => "Persona Actualizada Correctamente"];
+        } else {
+            return ["status" => "error", "message" => "Error al Actualizar la persona"];
         }
     }
 }
