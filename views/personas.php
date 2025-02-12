@@ -468,7 +468,7 @@
         paginaActual = paginaPersonas;
     }
     $(document).off("click", ".btnEliminarPersona").on("click", ".btnEliminarPersona", deletePersona);
-    // $(document).on("click", ".btnEliminarPersona", deletePersona);
+
 
     function deletePersona() {
         let idPersona = $(this).data("id_persona");
