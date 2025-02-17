@@ -10,6 +10,7 @@
             <div>
                 <label for="nombre" class="form-label">Categoria:</label>
                 <input type="text" id="nombre" name="nombre" class="form-control" placeholder="Ingresa tu categoria de productos">
+                <div class="error-campo" id="errorCategoria"></div>
                 <label for="descripcion" class="form-label">Descripcion:</label>
                 <input type="text" id="descripcion" name="descripcion" class="form-control" placeholder="Ingresa una descripcion de productos">
             </div>
@@ -46,7 +47,7 @@
             </div>
         </form>
         <!--                                                                    -->
-        <!--                           Mostrar                                  -->
+        <!--                         Mostrar                                    -->
         <!--  ================================================================= -->
         <table class="table table-striped table-bordered" id="tablaCategorias">
             <thead>
@@ -70,58 +71,50 @@
 
     </div>
 </div>
+<script src="../views/assets/js/modalConfirm.js"></script>
 
 <script>
     $(document).ready(function() {
         paginaActual = 1;
-        buscarCategoria(paginaActual); // Llamada inicial para cargar las categorías
-        //                             
-        //                                                Ingresar
-        // ============================================================================================================
+        buscarCategoria(paginaActual);
+        let $nombre = $("#nombre");
+        let errorCategoria = $("#errorCategoria");
 
+        $nombre.on("input", function() {
+            if ($(this).val().trim() !== "") {
+                errorCategoria.html("");
+                $(this).removeClass("error-campo-focus");
+            }
+        });
 
-        //                             
-        //                                                Editar
-        // ============================================================================================================
-
-
-
-        //                             
-        //                                                Eliminar
-        // ============================================================================================================
-
-
-
-
-        //                             
-        //                                                Buscar en tiempo real
-        // ============================================================================================================
-
-        //                             
-        //                                                Mostrar cantidad de registros 
-        // ============================================================================================================
-
-
-
+        // Ingresar Categoria
+        $("#btnIngresar").click(function(e) {
+            e.preventDefault();
+            setCategoria();
+        });
+        // Editar Categoria
+        $(document).off("click", ".btnEditar").on("click", ".btnEditar", updateCategoria);
+        // Eliminar Categoria
+        $(document).off("click", ".btnEliminar").on("click", ".btnEliminar", deleteCategoria);
+        // Buscar Categoria
+        $("#campo").on("keyup", function() {
+            buscarCategoria(1);
+        });
+        // Cantidad Mostrar Categorias 
+        $("#mostrar").on("change", function() {
+            if ($(this).val() === "") {
+                alert("Por favor, selecciona una opción válida.");
+            } else {
+                paginaActual = 1;
+                buscarCategoria(paginaActual);
+            }
+        });
     });
-    $("#btnIngresar").click(function(e) {
-        e.preventDefault();
-        setCategoria();
-    });
-    $(document).off("click", ".btnEditar").on("click", ".btnEditar", updateCategoria);
-    $(document).off("click", ".btnEliminar").on("click", ".btnEliminar", deleteCategoria);
-    $("#campo").on("keyup", function() {
-        buscarCategoria(1);
-    });
-    $("#mostrar").on("change", function() {
-        if ($(this).val() === "") {
-            alert("Por favor, selecciona una opción válida.");
-        } else {
-            paginaActual = 1;
-            buscarCategoria(paginaActual);
-        }
-    });
-
+    /*
+    ============================================================================================================
+    |                                               Funciones                                                  |
+    ============================================================================================================
+    */
     function updateCategoria() {
         const id = $(this).data('id');
         const nombre = $(this).data('nombre');
@@ -163,15 +156,17 @@
     }
 
     function deleteCategoria() {
-        const id = $(this).data('id');
-        if (confirm("¿Seguro que deseas eliminar esta categoría?")) {
+        const id = $(this).data("id");
+
+        ModalConfirm.confirmarConCancelar("¿Seguro que deseas eliminar esta categoría?", function() {
             $.post("ajax/categoriaProductosAjax.php", {
                 accion: "eliminar",
                 id: id
             }, function(respuesta) {
                 try {
                     const data = JSON.parse(respuesta);
-                    alert(data.message);
+                    ModalConfirm.confirmarSoloAceptar(data.message);
+
                     if (data.status === "success") {
                         buscarCategoria(paginaActual);
                     }
@@ -180,43 +175,49 @@
                     alert("Error inesperado. Revisa la consola.");
                 }
             });
-        }
+        });
     }
 
-    function setCategoria() {
-        console.log("Ejecutando setCategoria...");
-        const nombre = $("#nombre").val();
-        const descripcion = $("#descripcion").val();
 
-        if (nombre && descripcion) {
+    function setCategoria() {
+        let $nombre = $("#nombre");
+        let nombre = $nombre.val().trim();
+        let errorCategoria = $("#errorCategoria");
+        let descripcion = $("#descripcion").val().trim();
+        let mensajeError = "Por favor ingresa una categoría!!!";
+
+        if (nombre === "") {
+            console.log("Falta Categoria");
+            $nombre.focus().addClass("error-campo-focus");
+            errorCategoria.html(mensajeError);
+        } else {
             $.post("ajax/categoriaProductosAjax.php", {
                 accion: "crear",
                 nombre: nombre,
                 descripcion: descripcion,
             }, function(respuesta) {
                 try {
+                    if (!respuesta) throw new Error("Respuesta vacía del servidor");
+
                     const data = JSON.parse(respuesta);
+                    ModalConfirm.confirmarSoloAceptar(data.message);
+                
+
                     if (data.status === "success") {
-                        alert(data.message);
-                        buscarCategoria(paginaActual); // Mantiene la misma página después de agregar
+                        buscarCategoria(paginaActual);
+                        errorCategoria.html("");
                         limpiarCampos();
-                    } else {
-                        alert(data.message);
                     }
                 } catch (error) {
                     console.error("Error al procesar la respuesta:", error, respuesta);
                 }
             });
-        } else {
-            alert("Por favor, completa todos los campos.");
         }
     }
-    //                             
-    //                                                Mostrar buscar 
-    // ============================================================================================================
+
     function buscarCategoria(pagina) {
 
-        let mostrar = $("#mostrar").val() || 5; // Mostrar por defecto 5 datos 
+        let mostrar = $("#mostrar").val() || 5;
         let campo = $("#campo").val();
 
         $.post("ajax/categoriaProductosAjax.php", {
@@ -269,12 +270,6 @@
         paginaActual = pagina;
     }
 
-
-
-
-    //                             
-    //                              Funcion para limpiar los campos del formualario
-    // =================================================================================================
     function limpiarCampos() {
         $("#nombre").val("");
         $("#descripcion").val("");

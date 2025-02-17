@@ -840,6 +840,17 @@
     font-size: 24px;
     cursor: pointer;
 }
-.text-b{
-  color: #fff;
+
+.text-b {
+    color: #fff;
+}
+
+/* eror de ingresar campo */
+.error-campo {
+    color: red;
+    ;
+}
+
+.error-campo-focus:focus {
+    border-color: red;
 }
