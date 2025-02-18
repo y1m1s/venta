@@ -52,6 +52,10 @@
     gap: 10px;
 }
 
+.d-none {
+    display: none;
+}
+
 /*                                                                             */
 /*                        Colores generales                                    */
 /* =========================================================================== */
@@ -853,4 +857,8 @@
 
 .error-campo-focus:focus {
     border-color: red;
+}
+
+.text-red {
+    color: red;
 }
