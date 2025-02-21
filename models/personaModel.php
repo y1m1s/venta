@@ -6,18 +6,40 @@ class PersonaModelo
 
     static public function mdlSetPersona($tipoDocumentoSelect, $nroDocumento, $nombreRazonSocial, $direccion, $telefono)
     {
-        $stmt = Conexion::conexion()->prepare("insert into personas (nro_documento,nombre_razon_social,direccion,telefono,fk_id_tipo_documento) values(:nro_documento,:nombreRazonSocial,:direccion,:telefono,:tipoDocumento)");
-        $stmt->bindParam(":nro_documento", $nroDocumento, PDO::PARAM_INT);
-        $stmt->bindParam(":nombreRazonSocial", $nombreRazonSocial, PDO::PARAM_STR);
-        $stmt->bindParam(":direccion", $direccion, PDO::PARAM_STR);
-        $stmt->bindParam(":telefono", $telefono, PDO::PARAM_STR);
-        $stmt->bindParam(":tipoDocumento", $tipoDocumentoSelect, PDO::PARAM_INT);
-        if ($stmt->execute()) {
-            return ["status" => "success", "message" => "Persona Ingresada Correctamente"];
-        } else {
-            return ["status" => "error", "message" => "Error al ingresar la persona"];
+        try {
+            $db = Conexion::conexion();
+
+            // Verificar si el nro_documento ya existe en la base de datos
+            $stmt = $db->prepare("SELECT id_persona FROM personas WHERE nro_documento = :nro_documento");
+            $stmt->bindParam(":nro_documento", $nroDocumento, PDO::PARAM_INT);
+            $stmt->execute();
+
+            if ($stmt->rowCount() > 0) {
+                return ["status" => "error", "message" => "El número de documento ya está registrado"];
+            }
+
+            // Insertar nueva persona si no existe el número de documento
+            $stmt = $db->prepare("
+            INSERT INTO personas (nro_documento, nombre_razon_social, direccion, telefono, fk_id_tipo_documento) 
+            VALUES (:nro_documento, :nombreRazonSocial, :direccion, :telefono, :tipoDocumento)
+        ");
+
+            $stmt->bindParam(":nro_documento", $nroDocumento, PDO::PARAM_INT);
+            $stmt->bindParam(":nombreRazonSocial", $nombreRazonSocial, PDO::PARAM_STR);
+            $stmt->bindParam(":direccion", $direccion, PDO::PARAM_STR);
+            $stmt->bindParam(":telefono", $telefono, PDO::PARAM_STR);
+            $stmt->bindParam(":tipoDocumento", $tipoDocumentoSelect, PDO::PARAM_INT);
+
+            if ($stmt->execute()) {
+                return ["status" => "success", "message" => "Persona ingresada correctamente"];
+            } else {
+                return ["status" => "error", "message" => "Error al ingresar la persona"];
+            }
+        } catch (PDOException $e) {
+            return ["status" => "error", "message" => $e->getMessage()];
         }
     }
+
     static public function mdlGetPersona($buscarPersona, $mostrarPersonas, $paginaPersonas)
     {
         $paginaPersonas = $paginaPersonas ? (int)$paginaPersonas : 1;
@@ -77,28 +99,45 @@ class PersonaModelo
     }
     static public function mdlUpdatePersona($idPersona, $documento, $nroDocumento, $nombreRazonSocial, $direccion, $telefono)
     {
-        $stmt = Conexion::conexion()->prepare("
-        UPDATE personas 
-        SET 
-            nro_documento = :nroDocumento,
-            nombre_razon_social = :nombreRazonSocial,
-            direccion = :direccion,
-            telefono = :telefono,
-            fk_id_tipo_documento = :documento 
-        WHERE id_persona = :idPersona
-    ");
+        try {
+            $db = Conexion::conexion();
 
-        $stmt->bindValue(":nroDocumento", $nroDocumento, PDO::PARAM_INT);
-        $stmt->bindValue(":nombreRazonSocial", $nombreRazonSocial, PDO::PARAM_STR);
-        $stmt->bindValue(":direccion", $direccion, PDO::PARAM_STR);
-        $stmt->bindValue(":telefono", $telefono, PDO::PARAM_INT);
-        $stmt->bindValue(":documento", $documento, PDO::PARAM_INT);
-        $stmt->bindValue(":idPersona", $idPersona, PDO::PARAM_INT);
+            // Verificar si el nro_documento ya existe en otra persona
+            $stmt = $db->prepare("SELECT id_persona FROM personas WHERE nro_documento = :nroDocumento AND id_persona != :idPersona");
+            $stmt->bindParam(":nroDocumento", $nroDocumento, PDO::PARAM_INT);
+            $stmt->bindParam(":idPersona", $idPersona, PDO::PARAM_INT);
+            $stmt->execute();
 
-        if ($stmt->execute()) {
-            return ["status" => "success", "message" => "Persona Actualizada Correctamente"];
-        } else {
-            return ["status" => "error", "message" => "Error al Actualizar la persona"];
+            if ($stmt->rowCount() > 0) {
+                return ["status" => "error", "message" => "El número de documento ya está registrado en otra persona"];
+            }
+
+            // Actualizar los datos si no hay duplicados
+            $stmt = $db->prepare("
+                UPDATE personas 
+                SET 
+                    nro_documento = :nroDocumento,
+                    nombre_razon_social = :nombreRazonSocial,
+                    direccion = :direccion,
+                    telefono = :telefono,
+                    fk_id_tipo_documento = :documento 
+                WHERE id_persona = :idPersona
+            ");
+
+            $stmt->bindValue(":nroDocumento", $nroDocumento, PDO::PARAM_INT);
+            $stmt->bindValue(":nombreRazonSocial", $nombreRazonSocial, PDO::PARAM_STR);
+            $stmt->bindValue(":direccion", $direccion, PDO::PARAM_STR);
+            $stmt->bindValue(":telefono", $telefono, PDO::PARAM_INT);
+            $stmt->bindValue(":documento", $documento, PDO::PARAM_INT);
+            $stmt->bindValue(":idPersona", $idPersona, PDO::PARAM_INT);
+
+            if ($stmt->execute()) {
+                return ["status" => "success", "message" => "Persona actualizada correctamente"];
+            } else {
+                return ["status" => "error", "message" => "Error al actualizar la persona"];
+            }
+        } catch (PDOException $e) {
+            return ["status" => "error", "message" => $e->getMessage()];
         }
     }
 }

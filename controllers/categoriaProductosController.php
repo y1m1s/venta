@@ -11,7 +11,7 @@ class CategoriaProductosControlador
 
     static public function ctrEditarCategoriaProductos($id, $nombre, $descripcion)
     {
-        if ($id && $nombre && $descripcion) {
+        if ($id && $nombre || $descripcion) {
             return CategoriaProductosModelo::mdlEditarCategoriaProductos($id, $nombre, $descripcion);
         } else {
             return ["status" => "error", "message" => "Datos inválidos para editar"];

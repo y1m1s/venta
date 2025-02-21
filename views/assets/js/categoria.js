@@ -1,4 +1,5 @@
 $(document).ready(function () {
+
     paginaActual = 1;
     buscarCategoria(paginaActual);
     let $nombre = $("#nombre");
@@ -64,7 +65,7 @@ function updateCategoria() {
             try {
                 const data = JSON.parse(respuesta);
                 if (data.status === "success") {
-                    alert(data.message);
+                    ModalConfirm.confirmarSoloAceptar(data.message);
                     buscarCategoria(paginaActual);
                     limpiarCampos();
                     $("#btnIngresar").text("Aceptar");
@@ -115,7 +116,6 @@ function setCategoria() {
     let mensajeError = "Por favor ingresa una categoría!!!";
 
     if (nombre === "") {
-        console.log("Falta Categoria");
         $nombre.focus().addClass("error-campo-focus");
         errorCategoria.html(mensajeError);
     } else {

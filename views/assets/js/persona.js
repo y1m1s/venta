@@ -59,6 +59,23 @@ $(document).ready(function () {
         }
     });
 
+    $errorDireccion = $("#errorDireccion");
+    $direccion = $("#direccion");
+    $direccion.on("input", function () {
+        if ($(this).val().trim() !== "") {
+
+            $errorDireccion.addClass("d-none");
+            $direccion.focus().removeClass("error-campo-focus");
+
+
+
+        }
+    });
+
+
+
+
+
 
 
 
@@ -181,14 +198,14 @@ function getTipoDocumentoSelect() {
 
 function deleteTipoDocumento() {
     const idTipoDocumento = $(this).data('id_tipo_documento');
-    if (confirm("¿Seguro que deseas eliminar Tipo de Documento?")) {
+    ModalConfirm.confirmarConCancelar("¿Seguro que deseas eliminar este tipo de docuemnto?", function () {
         $.post("ajax/tipoDocumentoAjax.php", {
             accion: "eliminarTipoDocumento",
             idTipoDocumento: idTipoDocumento
         }, function (respuesta) {
             try {
                 const data = JSON.parse(respuesta);
-                alert(data.message);
+                ModalConfirm.confirmarSoloAceptar(data.message);
                 if (data.status === "success") {
                     getTipoDocumento();
                     getTipoDocumentoSelect();
@@ -198,7 +215,7 @@ function deleteTipoDocumento() {
                 alert("Error inesperado. Revisa la consola.");
             }
         });
-    }
+    });
 
 }
 
@@ -219,7 +236,7 @@ function updateTipoDocumento() {
             try {
                 const data = JSON.parse(respuesta);
                 if (data.status === "success") {
-                    alert(data.message);
+                    ModalConfirm.confirmarSoloAceptar(data.message);
                     getTipoDocumento();
                     limpiarTiposDocumentos()
                     getTipoDocumentoSelect();
@@ -257,40 +274,33 @@ function setPersona() {
     let errorDocumento = $("#errorDocumento");
     let errorNroDocumento = $("#errorNroDocumento");
     let errorNombreRazonSocial = $("#errorNombreRazonSocial");
-
+    let errorDireccion = $("#errorDireccion");
+    let $direc = $("#direccion");
     let $documento = $("#tipoDocumentoSelect").trigger("change");
     let $nrDoc = $("#nroDocumento");
     let tipoDocumentoSelect = $documento.val().trim();
     let nroDocumento = $nrDoc.val();
     let $nRS = $("#nombreRazonSocial");
     let nombreRazonSocial = $nRS.val();
-    let direccion = $("#direccion").val();
+    let direccion = $direc.val();
     let telefono = $("#telefono").val();
-    let mensajeError = ["Selecciona un tipo de documento", "Ingresa un numero de documento", "Ingresa un nombre /razon Social"];
-
-
-
+    let mensajeError = ["Selecciona un tipo de documento", "Ingresa un numero de documento", "Ingresa un nombre / razon Social", "Ingresa una direccion"];
     if (tipoDocumentoSelect === "") {
-
-
         $documento.focus().addClass("error-campo-focus");
         errorDocumento.removeClass("d-none");
         errorDocumento.html(mensajeError[0]);
-
-
-
-
-
     } else if (nroDocumento === "") {
-
         $nrDoc.focus().addClass("error-campo-focus");
         errorNroDocumento.removeClass("d-none");
         errorNroDocumento.html(mensajeError[1]);
-
     } else if (nombreRazonSocial === "") {
         $nRS.focus().addClass("erro-campo-focus");
         errorNombreRazonSocial.removeClass("d-none");
         errorNombreRazonSocial.html(mensajeError[2]);
+    } else if (direccion === "") {
+        $direc.focus().addClass("erro-campo-focus");
+        errorDireccion.removeClass("d-none");
+        errorDireccion.html(mensajeError[3]);
     } else {
         $.post("ajax/personaAjax.php", {
             accion: "crearPersona",
@@ -303,14 +313,11 @@ function setPersona() {
             try {
                 const data = JSON.parse(respuesta);
                 if (data.status === "success") {
-                    alert(data.message);
+                    ModalConfirm.confirmarSoloAceptar(data.message);
                     getPersona(paginaActual);
-
                     limpiarPersona();
-
-
                 } else {
-                    alert(data.message);
+                    ModalConfirm.confirmarSoloAceptar(data.message);
                 }
             } catch (error) {
                 console.error("Error al procesar la respuesta:", error, respuesta);
@@ -391,16 +398,14 @@ $(document).off("click", ".btnEliminarPersona").on("click", ".btnEliminarPersona
 
 function deletePersona() {
     let idPersona = $(this).data("id_persona");
-    console.log(idPersona);
-    console.log("Ejecutando  deletePersona...");
-    if (confirm("¿Seguro que deseas eliminar a la Persona?")) {
+    ModalConfirm.confirmarConCancelar("¿Seguro que deseas eliminar a este cliente?", function () {
         $.post("ajax/personaAjax.php", {
             accion: "eliminarPersona",
             idPersona: idPersona
         }, function (respuesta) {
             try {
                 let data = JSON.parse(respuesta);
-                alert(data.message);
+                ModalConfirm.confirmarSoloAceptar(data.message);
                 if (data.status === "success") {
                     getPersona(paginaActual);
                 }
@@ -409,13 +414,13 @@ function deletePersona() {
                 alert("Error inesperado. Revisa la consola.");
             }
         });
-    }
+    });
 }
 
 $(document).on('click', '.btnEditarPersona', updatePersona);
 
 function updatePersona() {
-    console.log("Ejecutando updatePersona...");
+
     let idPersona = $(this).data("id_persona");
     let documento = $(this).data("documento");
     let nroDocumento = $(this).data("nro_documento");
@@ -425,20 +430,12 @@ function updatePersona() {
 
 
     $("#tipoDocumentoSelect").val(documento).trigger("change");
-
     $("#nroDocumento").val(nroDocumento);
     $("#nombreRazonSocial").val(nombreRazonSocial);
     $("#direccion").val(direccion);
     $("#telefono").val(telefono);
-
-    console.log("idPersona:", idPersona);
-    console.log("documento:", documento);
-    console.log("nroDocumento:", nroDocumento);
-    console.log("nombreRazonSocial:", nombreRazonSocial);
-    console.log("direccion:", direccion);
-    console.log("telefono:", telefono);
-
     $("#btnIngresarPersona").text("Actualizar");
+
     $("#btnIngresarPersona").off("click").click(function (e) {
         e.preventDefault();
         $.post("ajax/personaAjax.php", {
@@ -454,7 +451,7 @@ function updatePersona() {
             try {
                 const data = JSON.parse(respuesta);
                 if (data.status === "success") {
-                    alert(data.message);
+                    ModalConfirm.confirmarSoloAceptar(data.message);
                     getPersona(paginaActual);
                     limpiarPersona();
                     $("#btnIngresarPersona").text("Aceptar");
@@ -464,7 +461,7 @@ function updatePersona() {
 
                     });
                 } else {
-                    alert(data.message);
+                    ModalConfirm.confirmarSoloAceptar(data.message);
                 }
             } catch (error) {
                 console.error("Error al procesar la respuesta actualizar :", error, respuesta);

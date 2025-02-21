@@ -58,8 +58,10 @@
 
                     </div>
                     <input type="text" id="direccion" class="form-control" placeholder="Direccion">
+                    <p class="error-campo d-none" id="errorDireccion"></p>
+
                 </div>
-                <div class="error-campo d-none" id="errorDocumento"></div>
+
 
                 <div class="col-5">
                     <div class="d-flex align-items-center mb-1">
@@ -161,3 +163,4 @@
     </div>
 </div>
 <script src="../views/assets/js/persona.js"></script>
+<script src="../views/assets/js/modalConfirm.js"></script>
